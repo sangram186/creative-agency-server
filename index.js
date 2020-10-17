@@ -43,7 +43,6 @@ client.connect(err => {
         img: Buffer(encImg, 'base64')
       };
 
-      // return res.send({name: file.name, path: `/${file.name}`});
       ordersCollection.insertOne({ name, email, order, details, price, image, role })
         .then(result => {
           fs.remove(filePath, error => {
@@ -117,6 +116,49 @@ client.connect(err => {
       })
   })
 });
+
+client.connect(err => {
+  const allAdmins = client.db("creative-agency").collection("admins");
+  app.post('/admins', (req, res) => {
+    const adminEmail = req.body;
+
+    allAdmins.insertOne(adminEmail)
+      .then(result => {
+        res.send(result.insertedCount > 0)
+      })
+  })
+
+  
+  app.get('/allAdmins', (req, res) => {
+    allAdmins.find({})
+      .toArray((error, admins) => {
+        res.send(admins);
+      })
+  })
+})
+
+client.connect(err => {
+  const allReviews = client.db("creative-agency").collection("reviews");
+  app.post('/reviews', (req, res) => {
+    const review = req.body;
+
+    allReviews.insertOne(review)
+      .then(result => {
+        res.send(result.insertedCount > 0)
+      })
+  })
+
+
+  app.get('/allReviews', (req, res) => {
+    allReviews.find({})
+      .toArray((error, getReview) => {
+        res.send(getReview);
+      })
+  })
+})
+
+
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
